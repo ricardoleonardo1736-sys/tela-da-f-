@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E0C0A">
+<title>Sua Tela de Fé</title>
+<meta name="description" content="Descubra como seria encontrar uma mensagem de fé na sua tela de bloqueio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0C0A; --bg2:#17130F; --card:#1E1914; --card2:#271F18;
+  --line:#3A2E22; --gold:#D9B37A; --gold2:#C0905C; --gold3:#F1D9AE;
+  --text:#F6EEE2; --muted:#B9A992; --dim:#857560; --red:#E0352B; --ok:#7BC48C;
+  --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,-apple-system,sans-serif;
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100%}
+body{min-height:100dvh;overflow-x:hidden;
+  background:radial-gradient(120% 60% at 50% -10%,#2A2016 0%,var(--bg) 60%) fixed}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:5;padding:14px 0 10px;background:linear-gradient(var(--bg) 70%,transparent)}
+.top-row{display:flex;align-items:center;gap:12px;height:32px}
+.back{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:.2s}
+.back:hover{background:var(--card)}
+.back[hidden]{visibility:hidden;display:grid}
+.brand{flex:1;text-align:center;font-family:var(--serif);font-size:19px;font-weight:600;color:var(--gold3);letter-spacing:.3px}
+.count{width:32px;text-align:right;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.bar{height:4px;border-radius:9px;background:var(--card2);margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--gold2),var(--gold3));transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.top.hide-bar .bar,.top.hide-bar .count{opacity:0}
+
+/* screens */
+.stage{flex:1;position:relative}
+.screen{animation:enter .45s cubic-bezier(.2,.8,.2,1) both;padding-top:8px}
+.screen.leave{animation:leave .22s ease both}
+@keyframes enter{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes leave{to{opacity:0;transform:translateX(-24px)}}
+.screen.back-in{animation-name:enterBack}
+@keyframes enterBack{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-size:11.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1,h2{font-family:var(--serif);font-weight:600;line-height:1.12;letter-spacing:-.2px}
+h1{font-size:34px}
+h2{font-size:28px;margin-bottom:8px}
+.sub{color:var(--muted);font-size:15.5px;line-height:1.5}
+.center{text-align:center}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:15px 16px;border-radius:var(--r);
+  background:var(--card);border:1px solid var(--line);font-size:15.5px;line-height:1.35;transition:transform .15s,border-color .2s,background .2s;
+  animation:optIn .4s cubic-bezier(.2,.8,.2,1) both}
+.opt:active{transform:scale(.98)}
+.opt .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--card2);font-size:20px}
+.opt .lbl{flex:1}
+.opt .lbl small{display:block;color:var(--dim);font-size:13px;margin-top:2px}
+.opt .tick{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;transition:.2s}
+.opt.sel{border-color:var(--gold);background:linear-gradient(180deg,#2D2318,#241C14)}
+.opt.sel .tick{background:var(--gold);border-color:var(--gold)}
+.opt.sel .tick::after{content:"";width:9px;height:5px;border:2px solid #1A140E;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.multi .opt .tick{border-radius:7px}
+@keyframes optIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* style cards */
+.styles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.stylec{border-radius:16px;padding:6px;background:var(--card);border:1.5px solid var(--line);text-align:center;transition:.2s;animation:optIn .4s both}
+.stylec.sel{border-color:var(--gold);transform:translateY(-3px)}
+.stylec .mini{aspect-ratio:9/16;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;font-family:var(--serif);font-size:10.5px;line-height:1.25;overflow:hidden}
+.stylec .mini b{font-family:var(--sans);font-size:17px;font-weight:600}
+.stylec span{display:block;font-size:13px;font-weight:600;margin:8px 0 2px}
+.stylec small{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}
+
+/* buttons */
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:17px 20px;border-radius:16px;
+  background:linear-gradient(180deg,#E6C38A,#C0905C);color:#1C140C;font-weight:700;font-size:16px;letter-spacing:.3px;
+  box-shadow:0 10px 30px -10px rgba(217,179,122,.55);transition:transform .15s,opacity .2s}
+.cta:active{transform:scale(.98)}
+.cta[disabled]{opacity:.35;pointer-events:none}
+.cta.pulse{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 10px 30px -10px rgba(217,179,122,.55)}50%{box-shadow:0 10px 40px -4px rgba(217,179,122,.85)}}
+.ghost{display:block;width:100%;padding:12px;color:var(--muted);font-size:14px;margin-top:6px}
+.foot{padding:18px 0 6px}
+.foot.stick{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 35%)}
+.note{font-size:12px;color:var(--dim);line-height:1.5;text-align:center;margin-top:10px}
+
+/* feedback toast */
+.feedback{margin-top:16px;padding:14px 16px;border-radius:14px;background:#221B13;border:1px solid #4A3923;color:var(--gold3);
+  font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.35;animation:optIn .4s both}
+
+/* phone */
+.phone-wrap{display:flex;justify-content:center;margin:20px 0 6px}
+.phone{position:relative;width:250px;aspect-ratio:9/19;border-radius:40px;padding:10px;background:#050505;
+  box-shadow:0 0 0 2px #2A2A2A,0 30px 60px -20px rgba(0,0,0,.8),0 0 80px -20px rgba(217,179,122,.35)}
+.phone.sm{width:210px}
+.phone.xs{width:190px}.phone.xs .scr .clock{font-size:50px}.phone.xs .scr .msg{font-size:16px}
+.scr{position:relative;height:100%;border-radius:31px;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:40px 18px 24px;transition:background .6s}
+.scr::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:76px;height:22px;border-radius:20px;background:#000;z-index:3}
+.scr .date{font-size:13px;font-weight:500;opacity:.9;margin-top:6px;position:relative;z-index:2}
+.scr .clock{font-size:64px;font-weight:600;letter-spacing:-2px;line-height:1;margin-top:2px;font-variant-numeric:tabular-nums;position:relative;z-index:2;transition:opacity .3s}
+.scr .msgbox{position:relative;z-index:2;margin-top:auto;margin-bottom:auto;width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.scr .cross{font-size:20px;opacity:.9}
+.scr .msg{font-family:var(--serif);font-weight:700;font-size:18.5px;line-height:1.22;transition:opacity .35s,transform .35s}
+.scr .ref{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;opacity:.8;font-weight:600}
+.scr .msg.out{opacity:0;transform:translateY(6px)}
+.scr .lock{position:relative;z-index:2;font-size:12px;opacity:.7}
+.scr .ring{position:absolute;left:-14px;right:-14px;top:-18px;bottom:-14px;pointer-events:none;z-index:3}
+.scr .ring path{fill:none;stroke:var(--red);stroke-width:4;stroke-linecap:round;stroke-dasharray:900;stroke-dashoffset:900}
+.scr .ring.draw path{animation:draw .9s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.scr .bg-img{position:absolute;inset:0;z-index:1}
+
+/* themes */
+.t-classic{background:radial-gradient(90% 60% at 50% 30%,#3A2A18 0%,#120E0A 70%);color:#FFF6E6}
+.t-classic .cross,.t-classic .ref{color:var(--gold)}
+.t-serene{background:linear-gradient(180deg,#F3D8A4 0%,#C9A97A 22%,#5E7B62 58%,#23392C 100%);color:#FFFDF6}
+.t-serene .msg{text-shadow:0 2px 14px rgba(0,0,0,.45)}
+.t-serene .date,.t-serene .clock{text-shadow:0 1px 10px rgba(0,0,0,.25)}
+.t-minimal{background:linear-gradient(180deg,#FBF6EE,#EDE2D1);color:#3A2C1F}
+.t-minimal .cross,.t-minimal .ref{color:#9A7647}
+
+/* timeline under phone */
+.slots{display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+.slot{padding:7px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--muted);transition:.25s}
+.slot.on{background:var(--gold);color:#1C140C;border-color:var(--gold);font-weight:600}
+
+/* info cards */
+.info{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.info .row{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--line);animation:optIn .5s both}
+.info .row .n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card2);color:var(--gold);font-weight:700;font-size:14px}
+.info .row p{font-size:14.5px;line-height:1.45;color:var(--muted)}
+.info .row p b{color:var(--text);font-weight:600}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.compare>div{border-radius:16px;padding:14px;border:1px solid var(--line);background:var(--card);font-size:13.5px;line-height:1.5;color:var(--muted)}
+.compare h4{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.compare .bad h4{color:#C98B7F}.compare .good{border-color:#5B4628;background:#221A12}.compare .good h4{color:var(--gold)}
+.compare li{list-style:none;padding-left:18px;position:relative;margin:5px 0}
+.compare .bad li::before{content:"✕";position:absolute;left:0;color:#C98B7F;font-size:11px;top:2px}
+.compare .good li::before{content:"✓";position:absolute;left:0;color:var(--gold);font-size:12px;top:1px}
+
+/* input */
+.field{margin-top:22px}
+.field input{width:100%;padding:17px 18px;border-radius:16px;background:var(--card);border:1.5px solid var(--line);color:var(--text);font:500 17px var(--sans);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--gold)}
+.field input::placeholder{color:var(--dim)}
+
+/* loading */
+.loader{display:flex;flex-direction:column;align-items:center;margin-top:30px}
+.ringp{position:relative;width:150px;height:150px}
+.ringp svg{transform:rotate(-90deg)}
+.ringp circle{fill:none;stroke-width:8}
+.ringp .trk{stroke:var(--card2)}
+.ringp .val{stroke:url(#g);stroke-linecap:round;stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset .2s linear}
+.ringp .pct{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:700;font-variant-numeric:tabular-nums}
+.checks{margin-top:28px;width:100%;display:flex;flex-direction:column;gap:12px}
+.chk{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--dim);transition:color .3s}
+.chk .b{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;transition:.3s}
+.chk.on{color:var(--text)}
+.chk.on .b{background:var(--gold);border-color:var(--gold)}
+.chk.on .b::after{content:"";width:9px;height:5px;border:2px solid #1A140E;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.chk.run .b{border-color:var(--gold);border-top-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* summary chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.chip{padding:7px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.chip b{color:var(--gold3);font-weight:600}
+
+.quote{font-family:var(--serif);font-style:italic;font-size:21px;line-height:1.35;color:var(--gold3);text-align:center;margin-top:18px}
+@media (max-width:360px){h1{font-size:29px}h2{font-size:24px}.phone{width:220px}.scr .clock{font-size:54px}.scr .msg{font-size:16.5px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="offer/offer.css">
+</head>
+<body>
+<div class="app">
+  <header class="top" id="top">
+    <div class="top-row">
+      <button class="back" id="back" aria-label="Voltar" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="brand" id="brand"></div>
+      <div class="count" id="count"></div>
+    </div>
+    <div class="bar"><i id="barfill"></i></div>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+</div>
+
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#C0905C"/><stop offset="1" stop-color="#F1D9AE"/></linearGradient></defs></svg>
+
+<script src="offer/bonus-art.js"></script>
+<script src="offer/offer.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — edite aqui
+   ===================================================================== */
+// Link do checkout (https). Enquanto estiver vazio, o botão de compra NÃO redireciona.
+const CHECKOUT_URL = "";
+
+const CONFIG = {
+  appName: "Tela de Fé",                 // nome mostrado no topo do funil
+  metaPixelId: "",                       // ex.: "1234567890" (vazio = desativado)
+  passUtms: true,                        // repassa utm_*, fbclid, src e sck da URL para o checkout
+  offer: {
+    productName: "TELA DE FÉ",
+    price: "R$ 27,90",
+    // OBRIGATÓRIO antes de publicar (sem isto o checkout fica bloqueado).
+    // Ex.: "Pagamento único de R$ 27,90." ou "Assinatura mensal de R$ 27,90, renovação automática. Cancele quando quiser."
+    billingTerms: "",
+    // Como o cliente recebe o acesso (ex.: "Você recebe o link de acesso no e-mail usado na compra.")
+    accessInfo: "",
+    // Compatibilidade real verificada (ex.: "Disponível para iPhone (iOS 16+) e Android 10+.")
+    compatibility: "",
+    // Mude para true quando os 5 materiais bônus estiverem prontos para entrega.
+    bonusesAvailable: false,
+  },
+};
+
+/* =====================================================================
+   CONTEÚDO
+   ===================================================================== */
+const FOCUS = {
+  paz:{label:"Paz",icon:"🕊️",
+    prayers:["Senhor, acalma minha mente e enche meu coração de paz.","Deus, quando a ansiedade apertar, me lembra que estás comigo.","Senhor, entrego em Tuas mãos tudo o que me preocupa hoje."],
+    verses:[["Deixo-vos a paz, a minha paz vos dou.","João 14:27"],["Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.","1 Pedro 5:7"],["Em paz me deito e logo adormeço, porque só tu, Senhor, me fazes habitar em segurança.","Salmos 4:8"]]},
+  forca:{label:"Força",icon:"🛡️",
+    prayers:["Deus, me dá forças para continuar por mais um dia.","Senhor, renova minhas forças quando o cansaço chegar.","Deus, fica comigo quando me faltarem forças."],
+    verses:[["Tudo posso naquele que me fortalece.","Filipenses 4:13"],["Os que esperam no Senhor renovarão as suas forças.","Isaías 40:31"],["Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.","Salmos 46:1"]]},
+  protecao:{label:"Proteção",icon:"🏠",
+    prayers:["Senhor, protege meu lar e todos aqueles que amo.","Deus, guarda minha família onde quer que ela esteja hoje.","Senhor, cobre minha casa com a Tua paz esta noite."],
+    verses:[["O Senhor te guardará de todo mal; ele guardará a tua alma.","Salmos 121:7"],["O anjo do Senhor acampa-se ao redor dos que o temem, e os livra.","Salmos 34:7"],["Eu e a minha casa serviremos ao Senhor.","Josué 24:15"]]},
+  direcao:{label:"Direção",icon:"🧭",
+    prayers:["Deus, guia meus passos quando eu não souber o que fazer.","Senhor, abre o caminho que for melhor para mim.","Deus, me ajuda a confiar em Ti mesmo sem entender o caminho."],
+    verses:[["Confia no Senhor de todo o teu coração, e ele endireitará as tuas veredas.","Provérbios 3:5-6"],["Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.","Salmos 119:105"],["Se algum de vós tem falta de sabedoria, peça-a a Deus.","Tiago 1:5"]]},
+  esperanca:{label:"Esperança",icon:"🌅",
+    prayers:["Senhor, renova minha esperança neste novo dia.","Deus, me lembra que os dias difíceis não duram para sempre.","Senhor, cura meu coração e traz minha paz de volta."],
+    verses:[["As misericórdias do Senhor se renovam a cada manhã.","Lamentações 3:22-23"],["Eu sei os planos que tenho para vós, planos de paz e de esperança.","Jeremias 29:11"],["O choro pode durar uma noite, mas a alegria vem pela manhã.","Salmos 30:5"]]},
+  gratidao:{label:"Gratidão",icon:"🙏",
+    prayers:["Obrigado, Senhor, por mais um dia de vida.","Deus, me ensina a enxergar as pequenas bênçãos de hoje.","Obrigado, Senhor, por tudo o que fizeste por mim hoje."],
+    verses:[["Este é o dia que o Senhor fez; regozijemo-nos e alegremo-nos nele.","Salmos 118:24"],["Em tudo dai graças.","1 Tessalonicenses 5:18"],["Rendei graças ao Senhor, porque ele é bom.","Salmos 136:1"]]},
+};
+const THEMES = {
+  classic:{label:"Clássico",desc:"Escuro e dourado",cls:"t-classic"},
+  serene:{label:"Serenidade",desc:"Natureza e luz",cls:"t-serene"},
+  minimal:{label:"Minimalista",desc:"Claro e suave",cls:"t-minimal"},
+};
+const SLOTS = [["07:00","Manhã"],["13:00","Tarde"],["21:00","Noite"]];
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+const S = {i:0, a:{}, dir:1, timers:[]};
+const A = S.a;
+const focus = () => FOCUS[A.focus] || FOCUS.paz;
+const theme = () => THEMES[A.style] || THEMES.classic;
+const nm = (pre="", post="") => A.name ? pre + A.name + post : "";
+
+function message(slot){
+  const f = focus(), fmt = A.format || "prayer";
+  const useVerse = fmt === "verse" || (fmt === "both" && slot % 2 === 1);
+  if (useVerse) { const v = f.verses[slot % 3]; return {text:"“" + v[0] + "”", ref:v[1]}; }
+  return {text:f.prayers[slot % 3], ref:""};
+}
+
+/* =====================================================================
+   ETAPAS (15)
+   type: intro | single | multi | info | mechanism | input | loading | result | offer
+   ===================================================================== */
+const STEPS = [
+  {id:"intro", type:"intro"},
+
+  {id:"pain", type:"single", eyebrow:"Sua rotina",
+   title:()=>"Você já chegou ao fim do dia e percebeu que quase não parou para orar?",
+   sub:"Responda com sinceridade — ninguém está julgando.",
+   opts:[
+    {v:"often",ic:"😔",t:"Sim, acontece com frequência"},
+    {v:"sometimes",ic:"⏳",t:"Às vezes, nos dias mais corridos"},
+    {v:"consistency",ic:"🔁",t:"Eu tento, mas não consigo manter a constância"},
+    {v:"deepen",ic:"✨",t:"Já tenho o hábito, mas quero fortalecer minha fé"}],
+   fb:{often:"Você não está sozinho. A correria do dia a dia faz isso com muita gente que ama a Deus.",
+       sometimes:"Os dias corridos são justamente os que mais precisam de uma pausa com Deus.",
+       consistency:"Constância raramente é falta de vontade. Normalmente, é falta de um lembrete no momento certo.",
+       deepen:"Que bom! Pequenos momentos ao longo do dia podem aprofundar ainda mais o que você já vive."}},
+
+  {id:"obstacle", type:"single", eyebrow:"O que atrapalha",
+   title:()=>"O que mais impede você de ter momentos de oração durante o dia?",
+   opts:[
+    {v:"forget",ic:"🧠",t:"Eu simplesmente esqueço no meio das tarefas"},
+    {v:"work",ic:"💼",t:"Trabalho e responsabilidades ocupam meu tempo"},
+    {v:"words",ic:"💭",t:"Quando lembro, não sei bem o que dizer"},
+    {v:"quit",ic:"📉",t:"Começo uma rotina e acabo abandonando"},
+    {v:"none",ic:"🌱",t:"Não tenho dificuldade, só quero orar mais vezes"}],
+   fb:{forget:"Entre tantas responsabilidades, é fácil deixar a oração para depois — e o depois nunca chega.",
+       work:"Quando o dia é cheio, a fé precisa caber nos pequenos intervalos.",
+       words:"Às vezes, tudo o que precisamos são algumas palavras para começar uma oração.",
+       quit:"Criar um hábito fica muito mais fácil quando existe um lembrete onde você já olha todos os dias.",
+       none:"Uma pequena mensagem pode multiplicar seus momentos de reflexão ao longo do dia."}},
+
+  {id:"feeling", type:"single", eyebrow:"Seu coração",
+   title:()=>"Quando passa um dia inteiro sem parar para orar, como você se sente?",
+   opts:[
+    {v:"peace",ic:"🌫️",t:"Sinto falta de paz"},
+    {v:"distant",ic:"🤍",t:"Sinto que poderia estar mais perto de Deus"},
+    {v:"night",ic:"🌙",t:"Só lembro à noite, e sinto que o dia passou"},
+    {v:"strength",ic:"🪫",t:"Sinto falta de força e direção"},
+    {v:"fine",ic:"🙂",t:"Me sinto bem, mas quero ir mais fundo"}]},
+
+  {id:"insight", type:"info"},
+
+  {id:"focus", type:"single", eyebrow:"Sua necessidade",
+   title:()=>nm("", ", se") ? `${A.name}, se pudesse receber uma mensagem de Deus hoje, o que ela traria?` : "Se você pudesse receber uma mensagem de Deus hoje, o que ela traria?",
+   sub:"Vamos usar sua escolha para preparar suas mensagens.",
+   opts:Object.entries(FOCUS).map(([k,f])=>({v:k,ic:f.icon,t:f.label,
+     s:{paz:"Para acalmar a mente",forca:"Para seguir nos dias difíceis",protecao:"Para mim e minha família",direcao:"Para decidir com sabedoria",esperanca:"Para não desanimar",gratidao:"Para valorizar as bênçãos"}[k]})),
+   fb:{paz:"Paz é o que mais buscamos quando a mente não para.",forca:"Força para hoje. E amanhã, força de novo.",protecao:"Cuidar de quem amamos começa entregando-os a Deus.",direcao:"Quando o caminho não está claro, uma palavra pode iluminar o próximo passo.",esperanca:"Esperança é lembrar que Deus ainda não terminou.",gratidao:"Um coração grato enxerga Deus nas pequenas coisas."}},
+
+  {id:"mechanism", type:"mechanism"},
+
+  {id:"moment", type:"single", eyebrow:"Seu momento",
+   title:()=>"Em que momento você mais gostaria de encontrar uma mensagem de fé?",
+   opts:[
+    {v:"morning",ic:"🌅",t:"Ao acordar, para começar o dia com Deus"},
+    {v:"work",ic:"☀️",t:"Durante o trabalho, quando preciso de força"},
+    {v:"anxious",ic:"🌧️",t:"Nos momentos de ansiedade ou preocupação"},
+    {v:"night",ic:"🌙",t:"Antes de dormir, para descansar em paz"},
+    {v:"always",ic:"📱",t:"O dia todo, sempre que eu olhar o celular"}]},
+
+  {id:"format", type:"single", eyebrow:"Seu conteúdo",
+   title:()=>"O que você quer ver na sua tela de bloqueio?",
+   opts:[
+    {v:"prayer",ic:"🙏",t:"Orações curtas que falam ao coração"},
+    {v:"verse",ic:"📖",t:"Versículos da Bíblia"},
+    {v:"both",ic:"✨",t:"Uma combinação de orações e versículos"}],
+   preview:true},
+
+  {id:"style", type:"style", eyebrow:"Seu estilo",
+   title:()=>"Qual estilo combina mais com a sua fé?",
+   sub:"Toque para ver a prévia."},
+
+  {id:"name", type:"input", eyebrow:"Quase lá",
+   title:()=>"Como você gostaria de ser chamado?",
+   sub:"Opcional. Usamos só para personalizar sua prévia — nada é enviado."},
+
+  {id:"commit", type:"multi", eyebrow:"Seu compromisso",
+   title:()=>nm("", ", como") ? `${A.name}, como você gostaria de usar sua tela de fé?` : "Como você gostaria de usar sua tela de fé?",
+   sub:"Escolha quantas quiser.",
+   opts:[
+    {v:"remind",ic:"⏰",t:"Como lembrete para orar mais vezes"},
+    {v:"peace",ic:"🕊️",t:"Como fonte de paz nos dias difíceis"},
+    {v:"daily",ic:"🌄",t:"Para começar e terminar o dia com Deus"},
+    {v:"word",ic:"📖",t:"Para manter a Palavra presente na rotina"},
+    {v:"family",ic:"👨‍👩‍👧",t:"Para inspirar minha família também"}]},
+
+  {id:"loading", type:"loading"},
+  {id:"result", type:"result"},
+  {id:"offer", type:"offer"},
+];
+const QUESTION_STEPS = STEPS.filter(s=>!["intro","loading","result","offer"].includes(s.type)).length;
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = (sel, el=document) => el.querySelector(sel);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const later = (fn, ms) => { const t = setTimeout(fn, ms); S.timers.push(t); return t; };
+const every = (fn, ms) => { const t = setInterval(fn, ms); S.timers.push(t); return t; };
+const clearTimers = () => { S.timers.forEach(t=>{clearTimeout(t);clearInterval(t)}); S.timers = []; };
+const buzz = (ms=12) => { try{ navigator.vibrate && navigator.vibrate(ms) }catch(e){} };
+const today = () => { try{ return new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"}) }catch(e){ return "" } };
+
+function track(event, params={}){
+  const payload = Object.assign({event, step:STEPS[S.i]?.id}, params);
+  try{ (window.dataLayer = window.dataLayer || []).push(payload) }catch(e){}
+  try{ if (window.fbq) window.fbq("trackCustom", event, payload) }catch(e){}
+}
+function loadPixel(){
+  if (!CONFIG.metaPixelId) return;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', CONFIG.metaPixelId); fbq('track','PageView');
+}
+
+/* Lock screen mock */
+function phoneHTML({time="09:41", text="", ref="", small=false, ring=true, id="ph"}={}){
+  return `<div class="phone-wrap"><div class="phone ${small===true?"sm":small||""}"><div class="scr ${theme().cls}" id="${id}">
+    <div class="date">${esc(today())}</div>
+    <div class="clock" data-clock>${esc(time)}</div>
+    <div class="msgbox">
+      <div class="cross">✝</div>
+      <div class="msg" data-msg>${esc(text)}</div>
+      <div class="ref" data-ref>${esc(ref)}</div>
+      ${ring?`<svg class="ring" data-ring viewBox="0 0 240 180" preserveAspectRatio="none"><path d="M118 14c-52 0-104 18-106 70 -2 54 52 84 112 84 62 0 108-30 106-80 -2-48-52-72-118-72 -18 0-40 3-56 10"/></svg>`:""}
+    </div>
+    <div class="lock">🔒</div>
+  </div></div></div>`;
+}
+function setPhone(el, {time, text, ref}, animate=true){
+  if (!el) return;
+  const m = $("[data-msg]",el), r = $("[data-ref]",el), c = $("[data-clock]",el), ring = $("[data-ring]",el);
+  const apply = () => {
+    if (time) c.textContent = time;
+    m.textContent = text; r.textContent = ref || "";
+    m.classList.remove("out");
+    if (ring){ ring.classList.remove("draw"); ring.getBoundingClientRect(); requestAnimationFrame(()=>ring.classList.add("draw")); }
+  };
+  if (!animate) return apply();
+  m.classList.add("out"); later(apply, 320);
+}
+function cyclePhone(el, slotsEl, ms=2600){
+  let k = 0;
+  const show = () => {
+    const msg = message(k);
+    setPhone(el, {time:SLOTS[k%3][0], text:msg.text, ref:msg.ref});
+    if (slotsEl) [...slotsEl.children].forEach((s,j)=>s.classList.toggle("on", j===k%3));
+    k++;
+  };
+  show(); every(show, ms);
+}
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+function chrome(){
+  const st = STEPS[S.i];
+  $("#brand").textContent = CONFIG.appName;
+  document.querySelector(".app").classList.toggle("wide", st.type === "offer");
+  $("#back").hidden = S.i === 0 || st.type === "loading";
+  const hide = ["intro","loading","result","offer"].includes(st.type);
+  $("#top").classList.toggle("hide-bar", hide);
+  const qIndex = STEPS.slice(0, S.i+1).filter(s=>!["intro","loading","result","offer"].includes(s.type)).length;
+  $("#count").textContent = hide ? "" : `${qIndex}/${QUESTION_STEPS}`;
+  $("#barfill").style.width = (S.i / (STEPS.length-1) * 100) + "%";
+}
+
+function go(n, dir=1){
+  if (n < 0 || n >= STEPS.length) return;
+  clearTimers();
+  const stage = $("#stage"), old = stage.firstElementChild;
+  S.dir = dir;
+  const render = () => { S.i = n; chrome(); stage.innerHTML = ""; stage.appendChild(build(STEPS[n])); window.scrollTo({top:0,behavior:"instant" in window ? "instant":"auto"}); };
+  if (old){ old.classList.add("leave"); setTimeout(render, 200); } else render();
+}
+const next = () => { track("quiz_step_complete",{answer:A[STEPS[S.i].id]}); go(S.i+1, 1); };
+
+function screen(html){
+  const d = document.createElement("section");
+  d.className = "screen" + (S.dir < 0 ? " back-in" : "");
+  d.innerHTML = html;
+  return d;
+}
+
+function build(st){
+  const T = typeof st.title === "function" ? st.title() : st.title;
+  switch(st.type){
+
+  case "intro": {
+    const el = screen(`
+      <div class="eyebrow center mt8">Quiz de 1 minuto</div>
+      <h1 class="center">E se toda vez que você olhasse o celular, encontrasse uma mensagem de Deus?</h1>
+      <p class="sub center mt16">Responda algumas perguntas rápidas e veja como ficaria <b style="color:var(--gold3)">a sua tela de bloqueio de fé</b> — feita para o momento que você está vivendo.</p>
+      ${phoneHTML({time:"09:41", id:"ph", small:"xs"})}
+      <div class="foot">
+        <button class="cta pulse" id="go">QUERO DESCOBRIR</button>
+        <p class="note">Leva cerca de 1 minuto · Prévia ilustrativa</p>
+      </div>`);
+    later(()=>cyclePhone($("#ph",el), null, 2400), 50);
+    $("#go",el).onclick = () => { buzz(); track("quiz_start"); go(1); };
+    return el;
+  }
+
+  case "single":
+  case "multi": {
+    const multi = st.type === "multi";
+    const sel = v => multi ? (A[st.id]||[]).includes(v) : A[st.id] === v;
+    const el = screen(`
+      <div class="eyebrow">${esc(st.eyebrow||"")}</div>
+      <h2>${esc(T)}</h2>
+      ${st.sub?`<p class="sub">${esc(st.sub)}</p>`:""}
+      <div class="opts ${multi?"multi":""}">
+        ${st.opts.map((o,i)=>`<button class="opt ${sel(o.v)?"sel":""}" data-v="${o.v}" style="animation-delay:${i*55}ms">
+          <span class="ic">${o.ic}</span><span class="lbl">${esc(o.t)}${o.s?`<small>${esc(o.s)}</small>`:""}</span><span class="tick"></span></button>`).join("")}
+      </div>
+      <div id="fb"></div>
+      ${st.preview?`<div id="pv"></div>`:""}
+      ${multi?`<div class="foot stick"><button class="cta" id="cont" ${(A[st.id]||[]).length?"":"disabled"}>CONTINUAR</button></div>`:""}`);
+    el.querySelectorAll(".opt").forEach(b=>b.onclick = () => {
+      buzz();
+      const v = b.dataset.v;
+      if (multi){
+        const arr = new Set(A[st.id]||[]);
+        arr.has(v) ? arr.delete(v) : arr.add(v);
+        A[st.id] = [...arr];
+        b.classList.toggle("sel");
+        $("#cont",el).disabled = !A[st.id].length;
+        return;
+      }
+      A[st.id] = v;
+      el.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel", x===b));
+      el.querySelectorAll(".opt").forEach(x=>x.disabled = true);
+      if (st.preview){
+        const msg = message(0);
+        $("#pv",el).innerHTML = phoneHTML({time:"07:00", text:msg.text, ref:msg.ref, small:true, id:"pvp"});
+        later(()=>{ const p=$("#pvp",el); const r=$("[data-ring]",p); r&&r.classList.add("draw"); }, 60);
+        later(()=>$("#pv",el).scrollIntoView({behavior:"smooth",block:"center"}), 80);
+        later(next, 2600);
+      } else if (st.fb && st.fb[v]){
+        $("#fb",el).innerHTML = `<div class="feedback">${esc(st.fb[v])}</div>`;
+        later(()=>$("#fb",el).scrollIntoView({behavior:"smooth",block:"center"}), 60);
+        later(next, 2100);
+      } else later(next, 450);
+    });
+    if (multi) $("#cont",el).onclick = () => { buzz(); next(); };
+    return el;
+  }
+
+  case "info": {
+    const el = screen(`
+      <div class="eyebrow">Uma descoberta importante</div>
+      <h2>${A.obstacle==="words" ? "Você não precisa de palavras perfeitas." : "Não é falta de fé. É falta de um lembrete no lugar certo."}</h2>
+      <p class="sub">Você pega o celular muitas vezes por dia — para ver as horas, uma notificação, uma mensagem. A maioria dessas olhadas leva poucos segundos e passa sem deixar nada.</p>
+      <div class="compare">
+        <div class="bad"><h4>Hoje</h4><ul><li>Notificações</li><li>Correria</li><li>Oração "para depois"</li></ul></div>
+        <div class="good"><h4>Com sua tela de fé</h4><ul><li>Uma oração a cada olhada</li><li>Uma pausa com Deus</li><li>Fé presente no dia</li></ul></div>
+      </div>
+      <p class="quote">E se cada uma dessas olhadas virasse um pequeno encontro com Deus?</p>
+      <div class="foot"><button class="cta" id="c">FAZ SENTIDO PRA MIM</button></div>`);
+    $("#c",el).onclick = () => { buzz(); next(); };
+    return el;
+  }
+
+  case "mechanism": {
+    const el = screen(`
+      <div class="eyebrow">Veja como funciona</div>
+      <h2>Sua mensagem de ${esc(focus().label.toLowerCase())}, direto na tela de bloqueio.</h2>
+      <p class="sub">Sem abrir app. Sem procurar. Você olha o celular — e a Palavra está lá.</p>
+      ${phoneHTML({id:"mph", small:true})}
+      <div class="slots" id="msl">${SLOTS.map(s=>`<span class="slot">${s[0]} · ${s[1]}</span>`).join("")}</div>
+      <div class="foot"><button class="cta" id="c">QUERO ISSO NO MEU CELULAR</button>
+      <p class="note">Demonstração ilustrativa do conceito.</p></div>`);
+    later(()=>cyclePhone($("#mph",el), $("#msl",el), 2400), 50);
+    $("#c",el).onclick = () => { buzz(); next(); };
+    return el;
+  }
+
+  case "style": {
+    const sample = message(0).text;
+    const el = screen(`
+      <div class="eyebrow">${esc(st.eyebrow)}</div>
+      <h2>${esc(T)}</h2>
+      <p class="sub">${esc(st.sub)}</p>
+      <div class="styles">
+        ${Object.entries(THEMES).map(([k,t],i)=>`<button class="stylec ${A.style===k?"sel":""}" data-v="${k}" style="animation-delay:${i*70}ms">
+          <div class="mini ${t.cls}"><b>09:41</b><div style="opacity:.85">✝</div><div style="font-weight:700">${esc(sample.length>48?sample.slice(0,46)+"…":sample)}</div></div>
+          <span>${t.label}</span><small>${t.desc}</small></button>`).join("")}
+      </div>
+      <div id="pv"></div>`);
+    el.querySelectorAll(".stylec").forEach(b=>b.onclick=()=>{
+      buzz(); A.style = b.dataset.v;
+      el.querySelectorAll(".stylec").forEach(x=>{x.classList.toggle("sel",x===b); x.disabled = true});
+      const msg = message(0);
+      $("#pv",el).innerHTML = phoneHTML({time:"07:00", text:msg.text, ref:msg.ref, small:true, id:"sp"});
+      later(()=>{ const r=$("#sp [data-ring]",el); r&&r.classList.add("draw") }, 60);
+      later(()=>$("#pv",el).scrollIntoView({behavior:"smooth",block:"center"}), 80);
+      later(next, 2300);
+    });
+    return el;
+  }
+
+  case "input": {
+    const el = screen(`
+      <div class="eyebrow">${esc(st.eyebrow)}</div>
+      <h2>${esc(T)}</h2>
+      <p class="sub">${esc(st.sub)}</p>
+      <div class="field"><input id="in" type="text" maxlength="24" autocomplete="given-name" placeholder="Seu primeiro nome" value="${esc(A.name||"")}"></div>
+      <div class="foot"><button class="cta" id="c">CONTINUAR</button><button class="ghost" id="skip">Pular</button></div>`);
+    const save = () => { A.name = $("#in",el).value.trim().split(/\s+/)[0].slice(0,24); };
+    $("#c",el).onclick = () => { buzz(); save(); next(); };
+    $("#skip",el).onclick = () => { A.name = ""; next(); };
+    $("#in",el).onkeydown = e => { if (e.key==="Enter"){ save(); next(); } };
+    return el;
+  }
+
+  case "loading": {
+    const items = [
+      `Identificando sua necessidade: ${focus().label}`,
+      `Selecionando ${A.format==="verse"?"versículos":A.format==="both"?"orações e versículos":"orações"} para você`,
+      `Aplicando o estilo ${theme().label}`,
+      `Montando sua tela de fé${nm(" para ")}`,
+    ];
+    const el = screen(`
+      <div class="loader">
+        <div class="ringp"><svg width="150" height="150"><circle class="trk" cx="75" cy="75" r="65"/><circle class="val" id="rv" cx="75" cy="75" r="65"/></svg><div class="pct" id="pc">0%</div></div>
+        <h2 class="center mt24">Preparando sua prévia…</h2>
+        <div class="checks">${items.map(t=>`<div class="chk"><span class="b"></span><span>${esc(t)}</span></div>`).join("")}</div>
+      </div>`);
+    let p = 0;
+    const rows = () => [...el.querySelectorAll(".chk")];
+    every(()=>{
+      p = Math.min(100, p + 1 + Math.round(Math.random()*2));
+      $("#pc",el).textContent = p + "%";
+      $("#rv",el).style.strokeDashoffset = 408 - 408*p/100;
+      const done = Math.floor(p/25);
+      rows().forEach((r,i)=>{ r.classList.toggle("on", i < done); r.classList.toggle("run", i === done && p < 100); });
+      if (p >= 100){ clearTimers(); buzz(30); later(()=>{ track("quiz_complete", {answers:JSON.stringify(A)}); go(S.i+1) }, 700); }
+    }, 55);
+    return el;
+  }
+
+  case "result": {
+    track("result_view");
+    const f = focus();
+    const el = screen(`
+      <div class="eyebrow center">✓ Sua prévia está pronta</div>
+      <h2 class="center">${A.name ? esc(A.name)+", esta" : "Esta"} pode ser a sua tela de fé.</h2>
+      <p class="sub center">Imagine olhar o celular de manhã, à tarde e à noite — e encontrar uma mensagem de <b style="color:var(--gold3)">${esc(f.label.toLowerCase())}</b> esperando por você.</p>
+      ${phoneHTML({id:"rph", small:true})}
+      <div class="slots" id="rsl">${SLOTS.map(s=>`<span class="slot">${s[0]} · ${s[1]}</span>`).join("")}</div>
+      <div class="chips">
+        <span class="chip">Necessidade: <b>${esc(f.label)}</b></span>
+        <span class="chip">Conteúdo: <b>${{prayer:"Orações",verse:"Versículos",both:"Orações + versículos"}[A.format]||"Orações"}</b></span>
+        <span class="chip">Estilo: <b>${esc(theme().label)}</b></span>
+      </div>
+      <div class="foot"><button class="cta pulse" id="c">QUERO TER ISSO NO MEU CELULAR</button>
+      <p class="note">Prévia ilustrativa criada com base nas suas respostas.</p></div>`);
+    later(()=>cyclePhone($("#rph",el), $("#rsl",el), 2800), 50);
+    $("#c",el).onclick = () => { buzz(); next(); };
+    return el;
+  }
+
+  case "offer":
+    return OfferSection();   // offer/offer.js
+  }
+}
+
+$("#back").onclick = () => { buzz(); let n = S.i-1; if (STEPS[n]?.type==="loading") n--; go(n,-1); };
+loadPixel();
+go(0);
+</script>
+</body>
+</html>
