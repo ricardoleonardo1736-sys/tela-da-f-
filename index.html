@@ -27,14 +27,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 /* top bar */
 .top{position:sticky;top:0;z-index:5;padding:14px 0 10px;background:linear-gradient(var(--bg) 70%,transparent)}
 .top-row{display:flex;align-items:center;gap:12px;height:32px}
-.back{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:.2s}
-.back:hover{background:var(--card)}
-.back[hidden]{visibility:hidden;display:grid}
 .brand{flex:1;text-align:center;font-family:var(--serif);font-size:19px;font-weight:600;color:var(--gold3);letter-spacing:.3px}
-.count{width:32px;text-align:right;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 .bar{height:4px;border-radius:9px;background:var(--card2);margin-top:10px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--gold2),var(--gold3));transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.top.hide-bar .bar,.top.hide-bar .count{opacity:0}
+.top.hide-bar .bar{opacity:0}
 
 /* screens */
 .stage{flex:1;position:relative}
@@ -117,6 +113,24 @@ h2{font-size:28px;margin-bottom:8px}
 @keyframes draw{to{stroke-dashoffset:0}}
 .scr .bg-img{position:absolute;inset:0;z-index:1}
 
+/* intro compacta: cabe num ecrã de telemóvel sem scroll */
+.screen.intro{padding-top:0}
+.screen.intro .eyebrow{margin-bottom:6px}
+.screen.intro h1{font-size:clamp(23px,6.6vw,30px);line-height:1.1}
+.screen.intro .sub{font-size:14px;line-height:1.42;margin-top:8px}
+.screen.intro .phone-wrap{margin:12px 0 0}
+.phone.ip{--pw:clamp(100px,calc((100svh - 345px)*.47),190px);width:var(--pw);border-radius:calc(var(--pw)*.15);padding:calc(var(--pw)*.045);container-type:inline-size}
+.phone.ip .scr{border-radius:11cqw;padding:17cqw 7cqw 9cqw}
+.phone.ip .scr::before{top:4cqw;width:32cqw;height:9cqw}
+.phone.ip .scr .date{font-size:6cqw;margin-top:0}
+.phone.ip .scr .clock{font-size:25cqw}
+.phone.ip .scr .msg{font-size:8.2cqw}
+.phone.ip .scr .cross{font-size:9cqw}
+.phone.ip .scr .ref{font-size:5cqw}
+.phone.ip .scr .msgbox{gap:3cqw}
+.phone.ip .scr .lock{font-size:6cqw}
+.screen.intro .foot{padding:14px 0 0}
+
 /* themes */
 .t-classic{background:radial-gradient(90% 60% at 50% 30%,#3A2A18 0%,#120E0A 70%);color:#FFF6E6}
 .t-classic .cross,.t-classic .ref{color:var(--gold)}
@@ -178,16 +192,31 @@ h2{font-size:28px;margin-bottom:8px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="offer/offer.css">
+<!-- UTMIFY SCRIPT -->
+<script
+  src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+  data-utmify-prevent-xcod-sck
+  data-utmify-prevent-subids
+  async
+  defer
+></script>
+<!-- END UTMIFY -->
+<!-- UTMIFY PIXEL -->
+<script>
+  window.pixelId = "6af6203b4d1f4ef96331803b";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+<!-- END UTMIFY PIXEL -->
 </head>
 <body>
 <div class="app">
   <header class="top" id="top">
     <div class="top-row">
-      <button class="back" id="back" aria-label="Voltar" hidden>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
       <div class="brand" id="brand"></div>
-      <div class="count" id="count"></div>
     </div>
     <div class="bar"><i id="barfill"></i></div>
   </header>
@@ -203,7 +232,7 @@ h2{font-size:28px;margin-bottom:8px}
    CONFIGURAÇÃO — edite aqui
    ===================================================================== */
 // Link do checkout (https). Enquanto estiver vazio, o botão de compra NÃO redireciona.
-const CHECKOUT_URL = "";
+const CHECKOUT_URL = "https://go.perfectpay.com.br/PPU38CQHQPF";
 
 const CONFIG = {
   appName: "Tela de Fé",                 // nome mostrado no topo do funil
@@ -214,11 +243,11 @@ const CONFIG = {
     price: "R$ 27,90",
     // OBRIGATÓRIO antes de publicar (sem isto o checkout fica bloqueado).
     // Ex.: "Pagamento único de R$ 27,90." ou "Assinatura mensal de R$ 27,90, renovação automática. Cancele quando quiser."
-    billingTerms: "",
+    billingTerms: "Pagamento único de R$ 27,90.",
     // Como o cliente recebe o acesso (ex.: "Você recebe o link de acesso no e-mail usado na compra.")
-    accessInfo: "",
+    accessInfo: "A entrega e a instalação são imediatas: você recebe um e-mail de confirmação com o botão para instalar, de forma simples e prática.",
     // Compatibilidade real verificada (ex.: "Disponível para iPhone (iOS 16+) e Android 10+.")
-    compatibility: "",
+    compatibility: "Sim, você pode usar no seu celular, tanto iPhone (iOS) quanto Android.",
     // Mude para true quando os 5 materiais bônus estiverem prontos para entrega.
     bonusesAvailable: false,
   },
@@ -363,7 +392,6 @@ const STEPS = [
   {id:"result", type:"result"},
   {id:"offer", type:"offer"},
 ];
-const QUESTION_STEPS = STEPS.filter(s=>!["intro","loading","result","offer"].includes(s.type)).length;
 
 /* =====================================================================
    HELPERS
@@ -431,11 +459,8 @@ function chrome(){
   const st = STEPS[S.i];
   $("#brand").textContent = CONFIG.appName;
   document.querySelector(".app").classList.toggle("wide", st.type === "offer");
-  $("#back").hidden = S.i === 0 || st.type === "loading";
   const hide = ["intro","loading","result","offer"].includes(st.type);
   $("#top").classList.toggle("hide-bar", hide);
-  const qIndex = STEPS.slice(0, S.i+1).filter(s=>!["intro","loading","result","offer"].includes(s.type)).length;
-  $("#count").textContent = hide ? "" : `${qIndex}/${QUESTION_STEPS}`;
   $("#barfill").style.width = (S.i / (STEPS.length-1) * 100) + "%";
 }
 
@@ -462,14 +487,14 @@ function build(st){
 
   case "intro": {
     const el = screen(`
-      <div class="eyebrow center mt8">Quiz de 1 minuto</div>
+      <div class="eyebrow center">Quiz de 1 minuto</div>
       <h1 class="center">E se toda vez que você olhasse o celular, encontrasse uma mensagem de Deus?</h1>
-      <p class="sub center mt16">Responda algumas perguntas rápidas e veja como ficaria <b style="color:var(--gold3)">a sua tela de bloqueio de fé</b> — feita para o momento que você está vivendo.</p>
-      ${phoneHTML({time:"09:41", id:"ph", small:"xs"})}
+      <p class="sub center">Responda algumas perguntas rápidas e veja como ficaria <b style="color:var(--gold3)">a sua tela de bloqueio de fé</b> — feita para o momento que você está vivendo.</p>
+      ${phoneHTML({time:"09:41", id:"ph", small:"ip"})}
       <div class="foot">
         <button class="cta pulse" id="go">QUERO DESCOBRIR</button>
-        <p class="note">Leva cerca de 1 minuto · Prévia ilustrativa</p>
       </div>`);
+    el.classList.add("intro");
     later(()=>cyclePhone($("#ph",el), null, 2400), 50);
     $("#go",el).onclick = () => { buzz(); track("quiz_start"); go(1); };
     return el;
@@ -542,8 +567,7 @@ function build(st){
       <p class="sub">Sem abrir app. Sem procurar. Você olha o celular — e a Palavra está lá.</p>
       ${phoneHTML({id:"mph", small:true})}
       <div class="slots" id="msl">${SLOTS.map(s=>`<span class="slot">${s[0]} · ${s[1]}</span>`).join("")}</div>
-      <div class="foot"><button class="cta" id="c">QUERO ISSO NO MEU CELULAR</button>
-      <p class="note">Demonstração ilustrativa do conceito.</p></div>`);
+      <div class="foot"><button class="cta" id="c">QUERO ISSO NO MEU CELULAR</button></div>`);
     later(()=>cyclePhone($("#mph",el), $("#msl",el), 2400), 50);
     $("#c",el).onclick = () => { buzz(); next(); };
     return el;
@@ -579,10 +603,9 @@ function build(st){
       <h2>${esc(T)}</h2>
       <p class="sub">${esc(st.sub)}</p>
       <div class="field"><input id="in" type="text" maxlength="24" autocomplete="given-name" placeholder="Seu primeiro nome" value="${esc(A.name||"")}"></div>
-      <div class="foot"><button class="cta" id="c">CONTINUAR</button><button class="ghost" id="skip">Pular</button></div>`);
+      <div class="foot"><button class="cta" id="c">CONTINUAR</button></div>`);
     const save = () => { A.name = $("#in",el).value.trim().split(/\s+/)[0].slice(0,24); };
     $("#c",el).onclick = () => { buzz(); save(); next(); };
-    $("#skip",el).onclick = () => { A.name = ""; next(); };
     $("#in",el).onkeydown = e => { if (e.key==="Enter"){ save(); next(); } };
     return el;
   }
@@ -627,8 +650,7 @@ function build(st){
         <span class="chip">Conteúdo: <b>${{prayer:"Orações",verse:"Versículos",both:"Orações + versículos"}[A.format]||"Orações"}</b></span>
         <span class="chip">Estilo: <b>${esc(theme().label)}</b></span>
       </div>
-      <div class="foot"><button class="cta pulse" id="c">QUERO TER ISSO NO MEU CELULAR</button>
-      <p class="note">Prévia ilustrativa criada com base nas suas respostas.</p></div>`);
+      <div class="foot"><button class="cta pulse" id="c">QUERO TER ISSO NO MEU CELULAR</button></div>`);
     later(()=>cyclePhone($("#rph",el), $("#rsl",el), 2800), 50);
     $("#c",el).onclick = () => { buzz(); next(); };
     return el;
@@ -639,7 +661,6 @@ function build(st){
   }
 }
 
-$("#back").onclick = () => { buzz(); let n = S.i-1; if (STEPS[n]?.type==="loading") n--; go(n,-1); };
 loadPixel();
 go(0);
 </script>

@@ -100,8 +100,7 @@ function PhonePreview(){
   let text = f ? OFFER_PRAYERS[f] : OFFER_DEFAULT_PRAYER, ref = "";
   if (f && A.format === "verse"){ const v = FOCUS[f].verses[0]; text = "“" + v[0] + "”"; ref = v[1]; }
   const now = new Date(), time = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
-  return `<div class="of-phone">${phoneHTML({time, text, ref, ring:false, id:"of-ph"})}
-    <p class="of-caption">Simulação ilustrativa da sua tela de bloqueio</p></div>`;
+  return `<div class="of-phone">${phoneHTML({time, text, ref, ring:false, id:"of-ph"})}</div>`;
 }
 
 function OfferHero(){
@@ -267,7 +266,7 @@ function OfferFAQ(){
   const c = offerCfg();
   const qs = [
     ["O que é o Tela de Fé?", "É um aplicativo de conteúdo espiritual que apresenta recursos como widgets, orações, versículos e ferramentas de reflexão bíblica."],
-    ["Preciso entender de tecnologia para usar?", "A experiência foi pensada para utilização simples. A configuração específica dos widgets dependerá do dispositivo e das funcionalidades disponíveis."],
+    ["Preciso entender de tecnologia para usar?", "Não. A utilização é fácil e prática, e instala automaticamente no seu celular."],
     ["Vou receber os cinco bônus?", "Sim. Os cinco materiais apresentados fazem parte da oferta de " + esc(c.price||"R$ 27,90") + " e serão disponibilizados conforme as instruções de entrega do produto."],
     ["Posso usar no meu celular?", fill(c.compatibility, "Compatibilidade com iOS e Android em confirmação.")],
     ["Como terei acesso após a compra?", fill(c.accessInfo, "Processo de entrega em confirmação.")],
@@ -298,7 +297,6 @@ function FinalCTA(){
       ${PriceDisplay()}
       ${CheckoutButton("of-buy2","QUERO COMEÇAR MINHA JORNADA DE FÉ")}
     </div>
-    <button type="button" class="of-restart" id="of-restart">Refazer o quiz</button>
   </section>`;
 }
 
@@ -354,16 +352,26 @@ function wireOffer(root){
         console.warn("[Tela de Fé] Checkout não configurado. Falta:", st.missing.join("; "));
         return;
       }
+      const url = buildCheckoutUrl();
+      const fallback = () => { if (msg) msg.innerHTML = `Se o checkout não abriu, <a href="${esc(url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">toque aqui para abrir</a>.`; };
       btn.classList.add("loading"); btn.setAttribute("aria-busy","true");
       if (msg) msg.textContent = "Abrindo o checkout…";
-      setTimeout(()=>{ window.location.assign(buildCheckoutUrl()); }, 250);
+      // Navega já no clique (sem atraso) para o navegador não bloquear.
+      // Se a página estiver dentro de um iframe, o checkout não pode abrir nele: abre numa nova aba.
+      let framed = false;
+      try { framed = window.top !== window.self; } catch(e) { framed = true; }
+      if (framed){
+        const w = window.open(url, "_blank");
+        if (w) { try { w.opener = null; } catch(e) {} } else fallback();
+      } else {
+        window.location.assign(url);
+      }
+      setTimeout(fallback, 3000);
       // Se o usuário voltar com o botão "voltar" do navegador, reativa o botão
-      setTimeout(()=>{ btn.classList.remove("loading"); btn.removeAttribute("aria-busy"); if (msg) msg.textContent = ""; }, 6000);
+      setTimeout(()=>{ btn.classList.remove("loading"); btn.removeAttribute("aria-busy"); }, 6000);
     });
   });
 
-  const rs = root.querySelector("#of-restart");
-  if (rs) rs.addEventListener("click", ()=>{ Object.keys(A).forEach(k=>delete A[k]); go(0,-1); });
 }
 
 /* ---------- Componente principal ---------- */

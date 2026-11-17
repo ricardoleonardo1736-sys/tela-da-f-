@@ -43,7 +43,6 @@
 .of-phone{margin-top:8px}
 .of-phone .phone{animation:ofPhoneIn 1s cubic-bezier(.2,.8,.2,1) both .15s, ofFloat 6s ease-in-out 1.3s infinite}
 .of-phone .scr .msg{animation:ofMsg 1s ease both .9s}
-.of-caption{text-align:center;font-size:12px;color:#8E7F69;margin-top:6px}
 @keyframes ofPhoneIn{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes ofFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes ofMsg{from{opacity:0;filter:blur(4px)}to{opacity:1;filter:none}}
@@ -260,7 +259,6 @@
 .of-final-pack span{display:block;font-family:var(--sans);font-size:12px;letter-spacing:2px;color:var(--of-gold);margin-top:4px}
 .of-final-box .of-price{margin-bottom:18px}
 .of-final-box .of-int{font-size:clamp(60px,18vw,76px)}
-.of-restart{display:block;margin:26px auto 0;padding:10px 16px;color:#8E7F69;font-size:14px;text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- DESKTOP ---------- */
 @media (min-width:860px){

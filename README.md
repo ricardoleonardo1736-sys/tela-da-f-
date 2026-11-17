@@ -43,6 +43,9 @@ Abrindo o arquivo localmente (ou com `?preview=1` na URL) aparece um aviso no to
 - Usa as respostas do quiz: nome, necessidade (muda a oração do celular), formato e estilo da tela.
 - Para ver a oferta direto, abra o console do navegador e rode `go(STEPS.length-1)`.
 
+## UTMify
+Os scripts da UTMify (UTMs + pixel `6af6203b4d1f4ef96331803b`) estão no `<head>` do `index.html`, entre `<!-- UTMIFY SCRIPT -->` e `<!-- END UTMIFY PIXEL -->`. O botão de compra também repassa os `utm_*` da URL para o checkout.
+
 ## Tracking
 Eventos enviados para `window.dataLayer` (GTM) e `fbq('trackCustom')`:
 - Quiz: `quiz_start`, `quiz_step_complete` (com `step` e `answer`), `quiz_complete`, `result_view`.
