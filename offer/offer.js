@@ -308,6 +308,24 @@ function DevNotice(){
     <span>Edite o bloco CONFIG no index.html. Sem CHECKOUT_URL e billingTerms o botão não redireciona.</span></aside>`;
 }
 
+/* Vídeo do app por dentro (offer/video). Só carrega quando chega perto do ecrã. */
+function AppVideo(){
+  return `<section class="of-sec of-reveal of-video-sec" aria-labelledby="of-vid-h">
+    <p class="of-eyebrow center">Por dentro do app</p>
+    <h2 id="of-vid-h" class="of-h2 center">Veja como funciona na prática</h2>
+    <p class="of-sub center">Orações, versículos, widgets, histórias bíblicas e chat — tudo o que você recebe, explicado em menos de 1 minuto.</p>
+    <div class="of-video-phone">
+      <video class="of-video" data-src="offer/video/app.mp4" poster="offer/video/app-poster.jpg"
+        muted loop playsinline preload="none" width="720" height="1472" aria-label="Vídeo do app por dentro"></video>
+      <button type="button" class="of-video-sound" aria-label="Ativar o som e ouvir a explicação do app">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span>Toque para ouvir a explicação</span>
+      </button>
+    </div>
+    <p class="of-video-cap">Com narração · toque no vídeo para pausar</p>
+  </section>`;
+}
+
 /* ---------- Comportamento ---------- */
 const OFFER_TRACKED = { view:false, bonus:false };
 let offerObservers = [];
@@ -328,6 +346,34 @@ function wireOffer(root){
     }), {threshold:0.15});
     if (bonus) bio.observe(bonus); offerObservers.push(bio);
   } else reveals.forEach(r=>r.classList.add("in"));
+
+  // Vídeo do app: carrega e toca quando aparece; pausa fora do ecrã
+  const vid = root.querySelector(".of-video");
+  if (vid){
+    const load = () => { if (!vid.src){ vid.src = vid.dataset.src; } };
+    const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    vid.controls = reduce;
+    vid.addEventListener("click", ()=>{ vid.paused ? vid.play().catch(()=>{}) : vid.pause(); });
+    const snd = root.querySelector(".of-video-sound");
+    if (snd) snd.addEventListener("click", e=>{
+      e.stopPropagation(); load();
+      vid.muted = false; vid.currentTime = 0; vid.controls = true;
+      vid.play().catch(()=>{});
+      snd.classList.add("gone"); snd.setAttribute("aria-hidden","true"); snd.tabIndex = -1;
+      track("app_video_sound_on");
+    });
+    let tracked = false;
+    if ("IntersectionObserver" in window){
+      const vio = new IntersectionObserver(es=>es.forEach(e=>{
+        if (e.isIntersecting){
+          load();
+          if (!reduce) vid.play().catch(()=>{ vid.controls = true; });
+          if (!tracked){ tracked = true; track("app_video_view"); }
+        } else if (!vid.paused) vid.pause();
+      }), {rootMargin:"200px 0px", threshold:0.35});
+      vio.observe(vid); offerObservers.push(vio);
+    } else { load(); vid.controls = true; }
+  }
 
   // FAQ
   root.querySelectorAll(".of-faq-q").forEach(btn=>{
@@ -379,7 +425,7 @@ function OfferSection(){
   const el = document.createElement("section");
   el.className = "screen of-root";
   el.setAttribute("aria-label", "Oferta Tela de Fé");
-  el.innerHTML = DevNotice() + OfferHero() + MainProductCard() + BonusSection() + OfferStack() + PricingCard() + OfferFAQ() + FinalCTA();
+  el.innerHTML = DevNotice() + OfferHero() + MainProductCard() + AppVideo() + BonusSection() + OfferStack() + PricingCard() + OfferFAQ() + FinalCTA();
   wireOffer(el);
   return el;
 }

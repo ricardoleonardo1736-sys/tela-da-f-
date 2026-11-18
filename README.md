@@ -69,3 +69,6 @@ Guardadas em `offer/img/` (otimizadas, ~1000 px). Créditos (não obrigatórios,
 - `bonus-dove.jpg` — 卡晨 — https://unsplash.com/photos/two-white-doves-flying-6XcziMmkNgQ
 
 Para trocar uma foto, substitua o arquivo em `offer/img/` mantendo o nome. As ilustrações SVG (`offer/bonus-art.js`) continuam como alternativa se uma foto for removida de `BONUS_PHOTOS`.
+
+## Vídeo do app
+`offer/video/app.mp4` (42 s, 4,3 MB, narração masculina + música de fundo original, legendas em português; começa sem som e o botão "Toque para ouvir" ativa o áudio) e `offer/video/app-poster.jpg`. Aparece na oferta depois de "Conheça o TELA DE FÉ", carrega só quando o visitante chega à secção e toca em loop. Eventos: `app_video_view`, `app_video_sound_on`.

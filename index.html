@@ -657,7 +657,9 @@ function build(st){
   }
 
   case "offer":
-    return OfferSection();   // offer/offer.js
+    if (typeof OfferSection === "function") return OfferSection();   // offer/offer.js
+    console.error("[Tela de Fé] offer/offer.js não carregou — publique a pasta offer/ junto com o index.html.");
+    return screen(`<p class="sub center" style="margin-top:40px">Não foi possível carregar a oferta. Verifique se a pasta <b>offer/</b> foi publicada junto com o index.html e recarregue a página.</p>`);
   }
 }
 
